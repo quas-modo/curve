@@ -955,6 +955,7 @@ int StatusTool::PrintChunkserverStatus(bool checkLeftSize) {
     // check use walpool
     ret = CheckUseWalPool(poolChunkservers, &useWalPool,
                           &useChunkFilePoolAsWalPool, metricClient_);
+
     // get chunkserver left size
     std::map<PoolIdType, std::vector<uint64_t>> poolChunkLeftSize;
     std::map<PoolIdType, std::vector<uint64_t>> poolWalSegmentLeftSize;

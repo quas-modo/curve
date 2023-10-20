@@ -20,7 +20,7 @@ g_build_opts=(
 )
 
 g_os="debian11"
-
+source "$(dirname "${BASH_SOURCE}")/docker_opts.sh"
 
 
 main() {
@@ -28,26 +28,15 @@ main() {
     source "util/build_functions.sh"
 
     get_options "$@"
-    get_version
 
-    if [[ "$g_stor" != "bs" && "$g_stor" != "fs" ]]; then
-        die "stor option must be either bs or fs\n"
-    fi
+    sudo docker run \
+        --rm \
+        -w /curve \
+        -v $(pwd):/curve \
+        ${g_docker_opts[@]} \
+        opencurvedocker/curve-base:build-$g_os \
+        bash util/build_in_image.sh "$@"
 
-    if [ "$g_list" -eq 1 ]; then
-        list_target
-    elif [[ "$g_target" == "" && "$g_depend" -ne 1 ]]; then
-        die "must not disable both only option or dep option\n"
-    else
-        if [ "$g_depend" -eq 1 ]; then
-            build_requirements
-        fi
-        if [ -n "$g_target" ]; then
-            build_target
-        fi
-    fi
-
-    #sudo docker run --rm -w /curve --user $(id -u ${USER}):$(id -g ${USER}) -v $(pwd):/curve -v ${HOME}:${HOME} -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -v /etc/shadow:/etc/shadow:ro --privileged opencurvedocker/curve-base:build-$g_os bash util/build_in_image.sh "$@"
 }
 
 ############################  MAIN()

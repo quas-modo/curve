@@ -29,13 +29,14 @@ Examples:
 
 ## build
 Usage:
-    make build stor=bs/fs only=TARGET dep=0/1 release=0/1 os=OS
+    make build stor=bs/fs only=TARGET1,...,TARGETx dep=0/1 release=0/1 os=OS
 Examples:
     make build stor=bs only=//src/chunkserver:chunkserver
-    make build stor=bs only=src/* dep=0
+    make build stor=bs only=src/*,test/* dep=0
     make build stor=fs only=test/* os=debian11
     make build stor=fs release=1
-
+Note:
+    Extra build options can be specified using BUILD_OPTS environment variable, which will be passed to bazel build command.
 
 ## dep
 ## configure dependency(before build)
@@ -66,6 +67,13 @@ Examples:
 ## create/run a container, changes outside will be mapped into the container
 Usage/Example:
 	make playground
+
+## package
+Usage:
+    make <tar|deb> release=0/1 dep=0/1 os=OS
+Examples:
+    make deb
+    make tar release=1 dep=1 os=debian11
 endef
 export help_msg
 
@@ -85,7 +93,7 @@ ci-list:
 	@bash util/build_in_image.sh --stor=$(stor) --list
 
 ci-build:
-	@bash util/build_in_image.sh --stor=$(stor) --only=$(only) --dep=$(dep) --release=$(release) --ci=$(ci) --os=$(os)
+	@bash util/build_in_image.sh --stor=$(stor) --only=$(only) --dep=$(dep) --release=$(release) --ci=$(ci) --os=$(os) --sanitizer=$(sanitizer)
 
 ci-dep:
 	@bash util/build_in_image.sh --stor=$(stor) --only="" --dep=1
@@ -95,6 +103,9 @@ install:
 
 image:
 	@bash util/image.sh $(stor) $(tag) $(os)
+
+tar deb:
+	@RELEASE=$(release) DEP=$(dep) OS=$(os) bash util/package.sh $@
 
 playground:
 	@bash util/playground.sh --version=$(version)

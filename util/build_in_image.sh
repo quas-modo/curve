@@ -19,6 +19,13 @@ g_build_opts=(
     "--copt -DGFLAGS_NS=google"
     "--copt -DUSE_BTHREAD_MUTEX"
 )
+# allow user to specify extra build options 
+# using environment variable BUILD_OPTS , if any.
+# custom build options will be appended to g_build_opts
+if [ -n "$BUILD_OPTS" ]; then
+    echo "Custom build options: $BUILD_OPTS"
+    g_build_opts+=("$BUILD_OPTS")
+fi
 
 g_os="debian11"
 

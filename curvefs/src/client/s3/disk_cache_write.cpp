@@ -176,7 +176,7 @@ int DiskCacheWrite::UploadFile(const std::string &name,
 void DiskCacheWrite::UploadFile(const std::list<std::string> &toUpload,
                                 std::shared_ptr<SynchronizationTask> syncTask) {
     std::list<std::string>::const_iterator iter;
-    for (iter = toUpload.begin(); iter != toUpload.end(); iter++) {
+    for (iter = toUpload.begin(); iter != toUpload.end(); ++iter) {
         UploadFile(*iter, syncTask);
     }
 }
@@ -448,7 +448,6 @@ int DiskCacheWrite::RemoveFile(const std::string fileName) {
                    << ", errno = " << errno;
         return -1;
     }
-    cachedObjName_->MoveBack(fileName);
     VLOG(9) << "remove file success, file = " << fileName;
     return 0;
 }
